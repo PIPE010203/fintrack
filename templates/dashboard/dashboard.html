@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Dashboard — {{ mes }}</h2>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-success shadow">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-arrow-up-circle"></i> Total Ingresos</h6>
+                <h3>${{ total_ingresos|floatformat:0 }} COP</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-danger shadow">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-arrow-down-circle"></i> Total Gastos</h6>
+                <h3>${{ total_gastos|floatformat:0 }} COP</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white {% if balance >= 0 %}bg-primary{% else %}bg-warning{% endif %} shadow">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-wallet2"></i> Balance</h6>
+                <h3>${{ balance|floatformat:0 }} COP</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>Gastos por categoría</h5>
+                <canvas id="graficaGastos"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>Últimos gastos</h5>
+                <table class="table table-sm">
+                    <thead><tr><th>Fecha</th><th>Descripción</th><th>Monto</th></tr></thead>
+                    <tbody>
+                    {% for g in ultimos_gastos %}
+                    <tr>
+                        <td>{{ g.fecha|date:"d/m/Y" }}</td>
+                        <td>{{ g.descripcion }}</td>
+                        <td class="text-danger">${{ g.monto|floatformat:0 }} COP</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" class="text-muted">Sin gastos este mes</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <a href="/transacciones/gastos/nuevo/" class="btn btn-danger btn-sm">+ Nuevo gasto</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>Últimos ingresos</h5>
+                <table class="table table-sm">
+                    <thead><tr><th>Fecha</th><th>Descripción</th><th>Monto</th></tr></thead>
+                    <tbody>
+                    {% for i in ultimos_ingresos %}
+                    <tr>
+                        <td>{{ i.fecha|date:"d/m/Y" }}</td>
+                        <td>{{ i.descripcion }}</td>
+                        <td class="text-success">${{ i.monto|floatformat:0 }} COP</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" class="text-muted">Sin ingresos este mes</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <a href="/transacciones/ingresos/nuevo/" class="btn btn-success btn-sm">+ Nuevo ingreso</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('graficaGastos').getContext('2d');
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: {{ categorias_labels|safe }},
+        datasets: [{
+            data: {{ categorias_data|safe }},
+            backgroundColor: ['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c'],
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let value = context.parsed;
+                        return context.label + ': $' + value.toLocaleString('es-CO') + ' COP';
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-robot"></i> Asistente Financiero IA</h2>
+
+<div class="card shadow">
+    <div class="card-body">
+        <div id="chat-box" style="height: 400px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #f8f9fa;">
+            <div class="mb-3">
+                <span class="badge bg-primary">FinTrack IA</span>
+                <div class="mt-1 p-2 bg-white rounded border">
+                    Hola, soy tu asistente financiero. Puedo ayudarte a analizar tus gastos e ingresos. ¿En qué te puedo ayudar?
+                </div>
+            </div>
+        </div>
+        <div class="input-group">
+            <input type="text" id="mensaje-input" class="form-control" placeholder="Escribe tu pregunta..." />
+            <button class="btn btn-primary" onclick="enviarMensaje()">
+                <i class="bi bi-send"></i> Enviar
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const csrfToken = '{{ csrf_token }}';
+
+function enviarMensaje() {
+    const input = document.getElementById('mensaje-input');
+    const mensaje = input.value.trim();
+    if (!mensaje) return;
+
+    const chatBox = document.getElementById('chat-box');
+
+    chatBox.innerHTML += `
+        <div class="mb-3 text-end">
+            <span class="badge bg-secondary">Tú</span>
+            <div class="mt-1 p-2 bg-primary text-white rounded">${mensaje}</div>
+        </div>`;
+
+    input.value = '';
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    chatBox.innerHTML += `<div id="typing" class="mb-3"><span class="badge bg-primary">FinTrack IA</span><div class="mt-1 p-2 bg-white rounded border text-muted">Escribiendo...</div></div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    fetch('/chatbot/enviar/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ mensaje: mensaje })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('typing').remove();
+        chatBox.innerHTML += `
+            <div class="mb-3">
+                <span class="badge bg-primary">FinTrack IA</span>
+                <div class="mt-1 p-2 bg-white rounded border">${data.respuesta}</div>
+            </div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+}
+
+document.getElementById('mensaje-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') enviarMensaje();
+});
+</script>
+{% endblock %}

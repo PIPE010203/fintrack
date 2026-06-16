@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h4 class="mb-4"><i class="bi bi-file-earmark-bar-graph"></i> Generar Reporte</h4>
+
+                <form method="get" action="/transacciones/exportar/pdf/">
+                    <h6 class="text-muted mb-3">Selecciona el período</h6>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label">Mes</label>
+                            <select name="mes" class="form-select">
+                                {% for num, nombre in meses.items %}
+                                <option value="{{ num }}" {% if num == mes_actual %}selected{% endif %}>{{ nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Año</label>
+                            <select name="anio" class="form-select">
+                                {% for a in anios %}
+                                <option value="{{ a }}" {% if a == anio_actual %}selected{% endif %}>{{ a }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="todo" value="1" id="todoCheck">
+                            <label class="form-check-label" for="todoCheck">
+                                Ver historial completo
+                            </label>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-file-pdf"></i> Exportar PDF
+                        </button>
+                        <button type="submit" formaction="/transacciones/exportar/excel/" class="btn btn-success">
+                            <i class="bi bi-file-excel"></i> Exportar Excel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
