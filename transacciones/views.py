@@ -228,7 +228,7 @@ def exportar_pdf(request):
 def exportar_excel(request):
     hoy = date.today()
     mes = request.GET.get('mes', '')
-    anio = request.GET.get('año', str(hoy.year))
+    anio = request.GET.get('anio', str(hoy.year))
     todo = request.GET.get('todo', '')
 
     gastos = Gasto.objects.filter(usuario=request.user).order_by('fecha')
