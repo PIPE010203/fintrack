@@ -40,28 +40,28 @@ class PresupuestoTest(TestCase):
         self.assertRedirects(response, '/presupuesto/')
         self.assertEqual(Presupuesto.objects.count(), 0)
 
-    def test_budget_list_shows_alert_when_above_80_percent(self):
+    def test_budget_list_shows_alert_when_limit_reached(self):
         Presupuesto.objects.create(
             usuario=self.user, categoria='alimentacion',
             limite=100000, mes=date.today().month, anio=date.today().year
         )
         Gasto.objects.create(
-            usuario=self.user, descripcion='Gasto alto', monto=90000,
+            usuario=self.user, descripcion='Gasto alto', monto=120000,
             categoria='alimentacion', fecha=date.today()
         )
         response = self.client.get('/presupuesto/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Cerca del límite')
+        self.assertContains(response, 'Ya alcanzaste el límite de tu presupuesto')
 
-    def test_budget_list_no_alert_when_below_80_percent(self):
+    def test_budget_list_no_alert_when_below_limit(self):
         Presupuesto.objects.create(
             usuario=self.user, categoria='transporte',
             limite=100000, mes=date.today().month, anio=date.today().year
         )
         Gasto.objects.create(
-            usuario=self.user, descripcion='Gasto bajo', monto=10000,
+            usuario=self.user, descripcion='Gasto bajo', monto=99900,
             categoria='transporte', fecha=date.today()
         )
         response = self.client.get('/presupuesto/')
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, 'Cerca del límite')
+        self.assertNotContains(response, 'Ya alcanzaste')
