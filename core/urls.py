@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', lambda req: redirect('dashboard/')),
+    path('', lambda req: redirect('usuarios/login/') if not req.user.is_authenticated else redirect('dashboard/')),
     path('usuarios/', include('usuarios.urls')),
     path('transacciones/', include('transacciones.urls')),
     path('presupuesto/', include('presupuesto.urls')),
