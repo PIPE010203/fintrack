@@ -13,7 +13,7 @@
             <h5>{{ item.presupuesto.get_categoria_display }}</h5>
             <div>
                 {% if item.alerta %}
-                <span class="badge bg-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i> Ya alcanzaste el límite de tu presupuesto</span>
+                <span class="badge bg-danger">⚠ Cerca del límite</span>
                 {% endif %}
                 <a href="/presupuesto/eliminar/{{ item.presupuesto.pk }}/" class="btn btn-sm btn-outline-danger ms-2">Eliminar</a>
             </div>

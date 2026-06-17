@@ -51,7 +51,7 @@ class PresupuestoTest(TestCase):
         )
         response = self.client.get('/presupuesto/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Ya alcanzaste el límite de tu presupuesto')
+        self.assertContains(response, 'Cerca del límite')
 
     def test_budget_list_no_alert_when_below_limit(self):
         Presupuesto.objects.create(
