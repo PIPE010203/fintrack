@@ -105,3 +105,8 @@ fintrack/
 ## License
 
 MIT
+## Integrantes
+-Andres Perez
+-Jean Franco Muñoz
+-Helen Florez
+-Luis Lopez Fernandez
