@@ -18,7 +18,7 @@ class PresupuestoTest(TestCase):
             'anio': 2026,
         })
         self.assertRedirects(response, '/presupuesto/')
-        self.assertEqual(Presupuesto.objects.count(), 1)
+        self.assertEqual(Presupuesto.objects.filter(usuario=self.user).count(), 1)
 
     def test_unique_constraint(self):
         Presupuesto.objects.create(
@@ -38,7 +38,7 @@ class PresupuestoTest(TestCase):
         )
         response = self.client.post(f'/presupuesto/eliminar/{p.pk}/')
         self.assertRedirects(response, '/presupuesto/')
-        self.assertEqual(Presupuesto.objects.count(), 0)
+        self.assertEqual(Presupuesto.objects.filter(usuario=self.user).count(), 0)
 
     def test_budget_list_shows_alert_when_limit_reached(self):
         Presupuesto.objects.create(

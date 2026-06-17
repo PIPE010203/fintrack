@@ -17,8 +17,8 @@ class GastoCRUDTest(TestCase):
             'fecha': '2026-06-01',
         })
         self.assertRedirects(response, '/transacciones/gastos/')
-        self.assertEqual(Gasto.objects.count(), 1)
-        g = Gasto.objects.first()
+        self.assertEqual(Gasto.objects.filter(usuario=self.user).count(), 1)
+        g = Gasto.objects.filter(usuario=self.user).first()
         self.assertEqual(g.descripcion, 'Almuerzo')
         self.assertEqual(float(g.monto), 15000)
 
@@ -54,7 +54,7 @@ class GastoCRUDTest(TestCase):
         )
         response = self.client.post(f'/transacciones/gastos/eliminar/{g.pk}/')
         self.assertRedirects(response, '/transacciones/gastos/')
-        self.assertEqual(Gasto.objects.count(), 0)
+        self.assertEqual(Gasto.objects.filter(usuario=self.user).count(), 0)
 
 
 class IngresoCRUDTest(TestCase):
@@ -70,7 +70,7 @@ class IngresoCRUDTest(TestCase):
             'fecha': '2026-06-01',
         })
         self.assertRedirects(response, '/transacciones/ingresos/')
-        self.assertEqual(Ingreso.objects.count(), 1)
+        self.assertEqual(Ingreso.objects.filter(usuario=self.user).count(), 1)
 
     def test_list_ingresos(self):
         Ingreso.objects.create(
@@ -103,7 +103,7 @@ class IngresoCRUDTest(TestCase):
         )
         response = self.client.post(f'/transacciones/ingresos/eliminar/{i.pk}/')
         self.assertRedirects(response, '/transacciones/ingresos/')
-        self.assertEqual(Ingreso.objects.count(), 0)
+        self.assertEqual(Ingreso.objects.filter(usuario=self.user).count(), 0)
 
 
 class ReportExportTest(TestCase):
