@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 <h2 class="mb-4 fw-bold">Dashboard — {{ mes }}</h2>
 
@@ -49,7 +50,10 @@
         <div class="card card-modern shadow-sm">
             <div class="card-body p-4">
                 <h5 class="fw-bold mb-4"><i class="bi bi-pie-chart me-2" style="color: #1a1a2e;"></i>Gastos por categoría</h5>
-                <canvas id="graficaGastos" style="max-height: 280px;"></canvas>
+                <canvas id="graficaGastos"
+                        data-labels='{{ categorias_labels|safe }}'
+                        data-values='{{ categorias_data|safe }}'
+                        style="max-height: 280px;"></canvas>
             </div>
         </div>
     </div>
@@ -125,49 +129,5 @@
 
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-const ctx = document.getElementById('graficaGastos').getContext('2d');
-new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-        labels: {{ categorias_labels|safe }},
-        datasets: [{
-            data: {{ categorias_data|safe }},
-            backgroundColor: ['#1a1a2e', '#16213e', '#0f3460', '#533483', '#e94560', '#f5a623'],
-            borderWidth: 3,
-            borderColor: '#fff',
-        }]
-    },
-    options: {
-        responsive: true,
-        cutout: '70%',
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    padding: 16,
-                    usePointStyle: true,
-                    pointStyleWidth: 12,
-                    font: { size: 12 }
-                }
-            },
-            tooltip: {
-                backgroundColor: '#1a1a2e',
-                titleFont: { size: 13 },
-                bodyFont: { size: 12 },
-                padding: 12,
-                cornerRadius: 8,
-                callbacks: {
-                    label: function(context) {
-                        let value = context.parsed;
-                        let total = context.dataset.data.reduce((a, b) => a + b, 0);
-                        let pct = ((value / total) * 100).toFixed(1);
-                        return context.label + ': $' + value.toLocaleString('es-CO') + ' COP (' + pct + '%)';
-                    }
-                }
-            }
-        }
-    }
-});
-</script>
+<script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}
