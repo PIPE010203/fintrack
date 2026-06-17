@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from transacciones.models import CATEGORIAS_GASTO
+from transacciones.choices import CATEGORIAS_GASTO
 
 class Presupuesto(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)

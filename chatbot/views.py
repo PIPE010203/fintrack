@@ -1,8 +1,11 @@
+import logging
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Sum
+
+logger = logging.getLogger(__name__)
 from transacciones.models import Gasto, Ingreso
 from openai import OpenAI
 from datetime import date
@@ -51,6 +54,7 @@ Responde de forma concisa, amigable y en español. Da consejos útiles basados e
         )
         respuesta = response.choices[0].message.content
     except Exception as e:
+        logger.error("Chatbot error for user %s: %s", request.user.username, str(e))
         respuesta = f"Error al conectar con IA: {str(e)}"
 
     return JsonResponse({'respuesta': respuesta})

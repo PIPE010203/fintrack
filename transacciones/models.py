@@ -1,22 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-CATEGORIAS_GASTO = [
-    ('alimentacion', 'Alimentación'),
-    ('transporte', 'Transporte'),
-    ('universidad', 'Universidad'),
-    ('entretenimiento', 'Entretenimiento'),
-    ('servicios', 'Servicios'),
-    ('otros', 'Otros'),
-]
-
-CATEGORIAS_INGRESO = [
-    ('salario', 'Salario'),
-    ('beca', 'Beca'),
-    ('freelance', 'Trabajo Freelance'),
-    ('familiar', 'Ayuda Familiar'),
-    ('otros', 'Otros'),
-]
+from .choices import CATEGORIAS_GASTO, CATEGORIAS_INGRESO
 
 class Gasto(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -1,7 +1,11 @@
+import logging
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from transacciones.models import Gasto, Ingreso, CATEGORIAS_GASTO
+
+logger = logging.getLogger(__name__)
+from transacciones.models import Gasto, Ingreso
+from transacciones.choices import CATEGORIAS_GASTO
 from datetime import date
 import json
 

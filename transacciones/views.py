@@ -1,11 +1,14 @@
+import logging
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib import messages
-from django.db.models import Sum
+
+logger = logging.getLogger(__name__)
 from .models import Gasto, Ingreso
 from .forms import GastoForm, IngresoForm
 from presupuesto.models import Presupuesto
+from presupuesto.utils import calcular_progreso
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -30,19 +33,13 @@ def lista_gastos(request):
     )
     alertas = []
     for p in presupuestos:
-        gastado = Gasto.objects.filter(
-            usuario=request.user,
-            categoria=p.categoria,
-            fecha__month=hoy.month,
-            fecha__year=hoy.year
-        ).aggregate(total=Sum('monto'))['total'] or 0
-        if float(gastado) > float(p.limite):
-            exceso = float(gastado) - float(p.limite)
+        progreso = calcular_progreso(request.user, p)
+        if progreso['exceso'] > 0:
             alertas.append({
                 'categoria': p.get_categoria_display(),
                 'limite': p.limite,
-                'gastado': gastado,
-                'exceso': exceso,
+                'gastado': progreso['gastado'],
+                'exceso': progreso['exceso'],
             })
     return render(request, 'transacciones/gastos.html', {
         'gastos': gastos,
@@ -246,7 +243,12 @@ def exportar_pdf(request):
                                    textColor=color_balance, spaceBefore=10)
     elements.append(Paragraph(f"Balance: ${balance:,.0f} COP", balance_style))
 
-    doc.build(elements)
+    try:
+        doc.build(elements)
+    except Exception as e:
+        logger.error("PDF export failed for user %s: %s", request.user.username, str(e))
+        messages.error(request, 'Error al generar el PDF.')
+        return redirect('reporte')
     return response
 
 @login_required
@@ -358,5 +360,10 @@ def exportar_excel(request):
 
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = f'attachment; filename="fintrack_{titulo_periodo}.xlsx"'
-    wb.save(response)
+    try:
+        wb.save(response)
+    except Exception as e:
+        logger.error("Excel export failed for user %s: %s", request.user.username, str(e))
+        messages.error(request, 'Error al generar el Excel.')
+        return redirect('reporte')
     return response

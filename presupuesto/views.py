@@ -1,10 +1,12 @@
+import logging
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Sum
+
+logger = logging.getLogger(__name__)
 from .models import Presupuesto
 from .forms import PresupuestoForm
-from transacciones.models import Gasto
+from .utils import calcular_progreso
 from datetime import date
 
 @login_required
@@ -13,19 +15,12 @@ def lista_presupuestos(request):
     presupuestos = Presupuesto.objects.filter(usuario=request.user, mes=hoy.month, anio=hoy.year)
     data = []
     for p in presupuestos:
-        gastado = Gasto.objects.filter(
-            usuario=request.user,
-            categoria=p.categoria,
-            fecha__month=p.mes,
-            fecha__year=p.anio
-        ).aggregate(total=Sum('monto'))['total'] or 0
-        porcentaje = int((float(gastado) / float(p.limite)) * 100)
-        alerta = porcentaje >= 100
+        progreso = calcular_progreso(request.user, p)
         data.append({
             'presupuesto': p,
-            'gastado': gastado,
-            'porcentaje': porcentaje,
-            'alerta': alerta,
+            'gastado': progreso['gastado'],
+            'porcentaje': progreso['porcentaje'],
+            'alerta': progreso['alerta'],
         })
     return render(request, 'presupuesto/lista.html', {'data': data})
 
