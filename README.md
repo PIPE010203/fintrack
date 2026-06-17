@@ -2,6 +2,10 @@
 
 Personal finance tracking web application for Colombian users, built with Django.
 
+## Objetivo
+
+Desarrollar una aplicación web que permita a los usuarios gestionar sus finanzas personales mediante el registro de ingresos y gastos, la creación de presupuestos mensuales y la generación de reportes.
+
 ## Features
 
 - **Expense & Income tracking** — Register and categorize your daily transactions
@@ -105,6 +109,11 @@ fintrack/
 ## License
 
 MIT
+## Problema que Resuelve
+
+Muchas personas tienen dificultades para controlar sus gastos e ingresos de manera organizada, lo que dificulta la toma de decisiones financieras y el cumplimiento de presupuestos personales.
+
+FinTrack permite registrar y categorizar transacciones, establecer presupuestos mensuales, visualizar resúmenes financieros y generar reportes, facilitando el control y la planificación de las finanzas personales de cada usuario.
 ## Integrantes
 -Andres Perez
 -Jean Franco Muñoz
