@@ -1,5 +1,32 @@
-.env
+# Python
 __pycache__/
-*.pyc
-db.sqlite3
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environment
 venv/
+.env
+
+# Database
+db.sqlite3
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Django
+/media/
+/staticfiles/
+
+# Project specific
+*.log

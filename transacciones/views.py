@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib import messages
+from django.db.models import Sum
 from .models import Gasto, Ingreso
 from .forms import GastoForm, IngresoForm
+from presupuesto.models import Presupuesto
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -22,7 +24,30 @@ MESES = {
 @login_required
 def lista_gastos(request):
     gastos = Gasto.objects.filter(usuario=request.user)
-    return render(request, 'transacciones/gastos.html', {'gastos': gastos})
+    hoy = date.today()
+    presupuestos = Presupuesto.objects.filter(
+        usuario=request.user, mes=hoy.month, anio=hoy.year
+    )
+    alertas = []
+    for p in presupuestos:
+        gastado = Gasto.objects.filter(
+            usuario=request.user,
+            categoria=p.categoria,
+            fecha__month=hoy.month,
+            fecha__year=hoy.year
+        ).aggregate(total=Sum('monto'))['total'] or 0
+        if float(gastado) > float(p.limite):
+            exceso = float(gastado) - float(p.limite)
+            alertas.append({
+                'categoria': p.get_categoria_display(),
+                'limite': p.limite,
+                'gastado': gastado,
+                'exceso': exceso,
+            })
+    return render(request, 'transacciones/gastos.html', {
+        'gastos': gastos,
+        'alertas': alertas,
+    })
 
 @login_required
 def nuevo_gasto(request):
@@ -228,7 +253,7 @@ def exportar_pdf(request):
 def exportar_excel(request):
     hoy = date.today()
     mes = request.GET.get('mes', '')
-    anio = request.GET.get('año', str(hoy.year))
+    anio = request.GET.get('anio', str(hoy.year))
     todo = request.GET.get('todo', '')
 
     gastos = Gasto.objects.filter(usuario=request.user).order_by('fecha')

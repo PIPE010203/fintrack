@@ -19,8 +19,8 @@ def lista_presupuestos(request):
             fecha__month=p.mes,
             fecha__year=p.anio
         ).aggregate(total=Sum('monto'))['total'] or 0
-        porcentaje = min(int((float(gastado) / float(p.limite)) * 100), 100)
-        alerta = porcentaje >= 80
+        porcentaje = int((float(gastado) / float(p.limite)) * 100)
+        alerta = porcentaje >= 100
         data.append({
             'presupuesto': p,
             'gastado': gastado,
