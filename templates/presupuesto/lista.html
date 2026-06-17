@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Presupuestos del mes</h2>
+    <a href="/presupuesto/nuevo/" class="btn btn-primary"><i class="bi bi-plus"></i> Nuevo Presupuesto</a>
+</div>
+
+{% if data %}
+{% for item in data %}
+<div class="card shadow mb-3">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5>{{ item.presupuesto.get_categoria_display }}</h5>
+            <div>
+                {% if item.alerta %}
+                <span class="badge bg-danger">⚠ Cerca del límite</span>
+                {% endif %}
+                <a href="/presupuesto/eliminar/{{ item.presupuesto.pk }}/" class="btn btn-sm btn-outline-danger ms-2">Eliminar</a>
+            </div>
+        </div>
+        <div class="progress mb-2" style="height: 20px;">
+            <div class="progress-bar {% if item.alerta %}bg-danger{% else %}bg-success{% endif %}"
+                 style="width: {{ item.porcentaje }}%">
+                {{ item.porcentaje }}%
+            </div>
+        </div>
+        <small class="text-muted">
+            Gastado: ${{ item.gastado|floatformat:0 }} COP /
+            Límite: ${{ item.presupuesto.limite|floatformat:0 }} COP
+        </small>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="alert alert-info">No tienes presupuestos este mes. <a href="/presupuesto/nuevo/">Crea uno</a>.</div>
+{% endif %}
+{% endblock %}

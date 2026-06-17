@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinTrack</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-bg: #0a0f1e;
+            --sidebar-hover: #151d35;
+            --sidebar-active: #1a2540;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-primary); }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: var(--sidebar-bg);
+            position: fixed;
+            top: 0; left: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            border-right: 1px solid #1e293b;
+        }
+        .sidebar-brand {
+            padding: 28px 20px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #1e293b;
+        }
+        .brand-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: white;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+        }
+        .brand-text { line-height: 1.2; }
+        .brand-text strong { color: white; font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+        .brand-text span { color: #475569; font-size: 11px; display: block; margin-top: 2px; }
+
+        .nav-section {
+            padding: 20px 16px 6px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            margin: 2px 8px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.15s ease;
+        }
+        .sidebar nav a i { font-size: 16px; width: 20px; opacity: 0.8; }
+        .sidebar nav a:hover { background: var(--sidebar-hover); color: #e2e8f0; }
+        .sidebar nav a.active {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.35);
+        }
+        .sidebar nav a.active i { opacity: 1; }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 16px;
+            border-top: 1px solid #1e293b;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #0f172a;
+            margin-bottom: 8px;
+        }
+        .user-avatar {
+            width: 34px; height: 34px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 700; font-size: 13px;
+            flex-shrink: 0;
+        }
+        .user-info span { color: #e2e8f0; font-size: 13px; font-weight: 500; }
+        .user-info small { color: #475569; font-size: 11px; display: block; }
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            color: #ef4444;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.15s;
+        }
+        .logout-btn:hover { background: #1e293b; color: #f87171; }
+
+        /* MAIN */
+        .main-content { margin-left: 260px; min-height: 100vh; }
+        .topbar {
+            background: white;
+            padding: 0 28px;
+            height: 64px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .topbar-left h5 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin: 0; }
+        .topbar-left p { font-size: 12px; color: var(--text-secondary); margin: 0; }
+        .topbar-right { display: flex; align-items: center; gap: 12px; }
+        .topbar-badge {
+            padding: 6px 14px;
+            background: #f1f5f9;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .page-body { padding: 28px; }
+
+        /* STAT CARDS */
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 22px 24px;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+            height: 100%;
+        }
+        .stat-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.08); transform: translateY(-2px); }
+        .stat-icon {
+            width: 46px; height: 46px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+        .stat-label { font-size: 12px; color: var(--text-secondary); font-weight: 500; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+        .stat-sub { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+
+        /* DATA CARDS */
+        .data-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .data-card-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .data-card-header h6 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .data-card-header h6 i { color: var(--accent); }
+        .table { margin: 0; }
+        .table thead th {
+            background: #f8fafc;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            border: none;
+            padding: 12px 20px;
+        }
+        .table tbody td {
+            padding: 13px 20px;
+            font-size: 13.5px;
+            border-color: #f8fafc;
+            vertical-align: middle;
+            color: var(--text-primary);
+        }
+        .table tbody tr:hover { background: #fafbff; }
+
+        /* BADGES */
+        .cat-badge {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        /* BUTTONS */
+        .btn-primary { background: var(--accent); border-color: var(--accent); font-weight: 500; font-size: 13px; border-radius: 8px; }
+        .btn-primary:hover { background: #4f46e5; border-color: #4f46e5; }
+        .btn-success { background: var(--success); border-color: var(--success); font-weight: 500; font-size: 13px; border-radius: 8px; }
+        .btn-danger { background: var(--danger); border-color: var(--danger); font-weight: 500; font-size: 13px; border-radius: 8px; }
+        .btn-sm { padding: 5px 14px; font-size: 12px; }
+        .btn-outline-secondary { font-size: 13px; border-radius: 8px; font-weight: 500; }
+
+        /* FORMS */
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 13.5px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+        .form-label { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; }
+
+        /* PAGE CARD (forms/detail pages) */
+        .page-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 32px;
+        }
+        .page-card h4 { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 24px; }
+
+        /* ALERTS */
+        .alert { border-radius: 10px; border: none; font-size: 13.5px; }
+        .alert-success { background: #f0fdf4; color: #166534; }
+        .alert-danger { background: #fef2f2; color: #991b1b; }
+        .alert-info { background: #eff6ff; color: #1e40af; }
+
+        /* PROGRESS */
+        .progress { border-radius: 20px; height: 8px; background: #f1f5f9; }
+        .progress-bar { border-radius: 20px; }
+
+        /* EMPTY STATE */
+        .empty-state { padding: 48px 20px; text-align: center; }
+        .empty-state i { font-size: 40px; color: #cbd5e1; margin-bottom: 12px; }
+        .empty-state p { color: var(--text-secondary); font-size: 14px; }
+    </style>
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon"><i class="bi bi-wallet2"></i></div>
+        <div class="brand-text">
+            <strong>FinTrack</strong>
+            <span>Finanzas personales</span>
+        </div>
+    </div>
+
+    <div class="nav-section">Navegación</div>
+    <nav>
+        <a href="/dashboard/"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="/transacciones/gastos/"><i class="bi bi-arrow-down-circle"></i> Gastos</a>
+        <a href="/transacciones/ingresos/"><i class="bi bi-arrow-up-circle"></i> Ingresos</a>
+        <a href="/presupuesto/"><i class="bi bi-piggy-bank"></i> Presupuesto</a>
+    </nav>
+
+    <div class="nav-section">Reportes</div>
+    <nav>
+        <a href="/transacciones/reporte/"><i class="bi bi-file-earmark-bar-graph"></i> Exportar Reporte</a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="user-info">
+            <div class="user-avatar">{{ user.username|first|upper }}</div>
+            <div>
+                <span>{{ user.username }}</span>
+                <small>Usuario activo</small>
+            </div>
+        </div>
+        <a href="/usuarios/logout/" class="logout-btn">
+            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+        </a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="topbar">
+        <div class="topbar-left">
+            <h5>{% block page_title %}FinTrack{% endblock %}</h5>
+            <p>{% block page_subtitle %}{% endblock %}</p>
+        </div>
+        <div class="topbar-right">
+            <span class="topbar-badge"><i class="bi bi-calendar3 me-1"></i> {% now "d M Y" %}</span>
+        </div>
+    </div>
+    <div class="page-body">
+{% else %}
+<div style="min-height:100vh; background: linear-gradient(135deg, #0a0f1e 0%, #1a1040 100%); display:flex; align-items:center; justify-content:center;">
+<div style="width:100%; max-width:420px; padding: 20px;">
+{% endif %}
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="background: white; border-radius: 20px; padding: 40px; box-shadow: 0 25px 60px rgba(0,0,0,0.3);">
+    <div style="text-align:center; margin-bottom: 32px;">
+        <div style="width:56px; height:56px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 14px; display:flex; align-items:center; justify-content:center; margin: 0 auto 16px; box-shadow: 0 8px 20px rgba(99,102,241,0.4);">
+            <i class="bi bi-wallet2" style="color:white; font-size:24px;"></i>
+        </div>
+        <h4 style="font-weight:700; color:#0f172a; margin-bottom:4px;">Bienvenido a FinTrack</h4>
+        <p style="color:#64748b; font-size:14px; margin:0;">Inicia sesión para continuar</p>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div style="margin-bottom: 20px; text-align:center;">
+            <label style="display:block; font-size:13px; font-weight:600; color:#0f172a; margin-bottom:8px;">{{ field.label }}</label>
+            <div style="display:flex; justify-content:center;">
+                {{ field }}
+            </div>
+            {% if field.errors %}
+            <div style="color:#ef4444; font-size:12px; margin-top:4px; text-align:center;">{{ field.errors }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary w-100 mt-2" style="padding:12px; font-size:14px; font-weight:600;">
+            Iniciar sesión
+        </button>
+    </form>
+    <p style="text-align:center; margin-top:20px; font-size:13px; color:#64748b;">
+        ¿No tienes cuenta? <a href="/usuarios/registro/" style="color:#6366f1; font-weight:600;">Regístrate</a>
+    </p>
+</div>
+{% endblock %}

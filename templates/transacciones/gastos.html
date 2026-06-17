@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Mis Gastos</h2>
+    <a href="/transacciones/gastos/nuevo/" class="btn btn-danger"><i class="bi bi-plus"></i> Nuevo Gasto</a>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Descripción</th>
+                    <th>Categoría</th>
+                    <th>Monto</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for g in gastos %}
+            <tr>
+                <td>{{ g.fecha }}</td>
+                <td>{{ g.descripcion }}</td>
+                <td><span class="badge bg-secondary">{{ g.get_categoria_display }}</span></td>
+                <td class="text-danger fw-bold">${{ g.monto|floatformat:0 }} COP</td>
+                <td>
+                    <a href="/transacciones/gastos/editar/{{ g.pk }}/" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="/transacciones/gastos/eliminar/{{ g.pk }}/" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-center text-muted">No hay gastos registrados</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

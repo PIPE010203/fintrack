@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Mis Ingresos</h2>
+    <a href="/transacciones/ingresos/nuevo/" class="btn btn-success"><i class="bi bi-plus"></i> Nuevo Ingreso</a>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Descripción</th>
+                    <th>Categoría</th>
+                    <th>Monto</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for i in ingresos %}
+            <tr>
+                <td>{{ i.fecha }}</td>
+                <td>{{ i.descripcion }}</td>
+                <td><span class="badge bg-success">{{ i.get_categoria_display }}</span></td>
+                <td class="text-success fw-bold">${{ i.monto|floatformat:0 }} COP</td>
+                <td>
+                    <a href="/transacciones/ingresos/editar/{{ i.pk }}/" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="/transacciones/ingresos/eliminar/{{ i.pk }}/" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-center text-muted">No hay ingresos registrados</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
