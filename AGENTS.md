@@ -52,7 +52,7 @@ Root `/` redirects to `/dashboard/`. All endpoints wrapped with `@login_required
 
 - **Locale**: `es-co`, timezone `America/Bogota` (settings.py:73-74)
 - **Auth**: Django `User` model, `LOGIN_URL = '/usuarios/login/'`, `LOGIN_REDIRECT_URL = '/dashboard/'`
-- **No static assets locally** — Bootstrap 5, Bootstrap Icons, Chart.js all loaded from CDN
-- **`.env` required keys**: `SECRET_KEY`, `DEBUG`, `OPENAI_API_KEY` (latter needed for chatbot, app still works without it — errors surfaced in chat)
-- **Tests**: `tests.py` files exist in all apps but are empty stubs (just `from django.test import TestCase`). No test coverage to maintain.
-- **No lint/typecheck config** — standard Django project, no ruff/black/mypy set up
+- **`.env` required key**: `SECRET_KEY`. `OPENAI_API_KEY` is optional (chatbot works without it — errors surfaced in UI). `DEBUG` is hardcoded `True` in `core/settings.py:9`, not read from `.env`.
+- **Tests**: Real tests exist across all 5 apps (~340 lines total). Run `python manage.py test <app>` for focused verification. No external services needed — tests use SQLite in-memory.
+- **`static/` dir is empty** — Bootstrap 5, Bootstrap Icons, Chart.js all loaded from CDN.
+- **No lint/typecheck config** — standard Django project, no ruff/black/mypy set up.
